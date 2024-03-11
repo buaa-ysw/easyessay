@@ -30,19 +30,19 @@ class EssayCrew:
         abstract_task = tasks.abstract_writing_task(abstract_writer, self.idea, self.name)
         context = [abstract_task]
         introduction_task = tasks.introduction_writing_task(introduction_writer, self.idea, self.name, context)
-        context = [context, introduction_task]
+        context = [abstract_task, introduction_task]
         system_composition_task = tasks.system_composition_writing_task(system_composition_writer, self.idea, self.name, context)
-        context = [context, system_composition_task]
+        context = [abstract_task, introduction_task, system_composition_task]
         system_principle_task = tasks.system_principle_writing_task(system_principle_writer, self.idea, self.name, context)
-        context = [context, system_principle_task]
+        context = [abstract_task, introduction_task, system_composition_task, system_principle_task]
         result_analysis_task = tasks.result_analysis_writing_task(result_analysis_writer, self.idea, self.name, context)
-        context = [context, result_analysis_task]
+        context = [abstract_task, introduction_task, system_composition_task, system_principle_task, result_analysis_task]
         innovation_points_task = tasks.innovation_points_writing_task(innovation_points_writer, self.idea, self.name, context)
-        context = [context, innovation_points_task]
+        context = [abstract_task, introduction_task, system_composition_task, system_principle_task, result_analysis_task, innovation_points_task]
         market_prospect_task = tasks.market_prospect_writing_task(market_prospect_writer, self.idea, self.name, context)
-        context = [context, market_prospect_task]
+        context = [abstract_task, introduction_task, system_composition_task, system_principle_task, result_analysis_task, innovation_points_task, market_prospect_task]
         conclusion_task = tasks.conclusion_writing_task(conclusion_writer, self.idea, self.name, context)
-        context = [context, conclusion_task]
+        context = [abstract_task, introduction_task, system_composition_task, system_principle_task, result_analysis_task, innovation_points_task, market_prospect_task, conclusion_task]
         bibliography_task = tasks.bibliography_writing_task(bibliography_writer, self.idea, self.name, context)
         
         # Define crew
@@ -61,8 +61,7 @@ class EssayCrew:
 
 def main_run(idea, name):
     essay_crew = EssayCrew(idea, name)
-    result = essay_crew.run()
-    return result
+    essay_crew.run()
 
 if __name__ == "__main__":
     print("## easyessay ##")
@@ -70,7 +69,7 @@ if __name__ == "__main__":
     idea = input(dedent("""What's your idea?"""))
     name = input(dedent("""Name the essay:"""))
     essay_crew = EssayCrew(idea, name)
-    result = essay_crew.run()
+    essay_crew.run()
     print("----------------------")
     print("######################")
     print("## Essay Completed! ##")

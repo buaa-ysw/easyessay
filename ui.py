@@ -163,7 +163,8 @@ with ui.splitter(value=12).classes('w-full h-full') as splitter:
                         # ui.button(icon='send', on_click=lambda: ).props('flat color=primary').bind_visibility_from(main_input, 'value')
 
                     with ui.row():
-                        run_spinner = ui.spinner(size='lg').visible = False
+                        run_spinner = ui.spinner(size='lg')
+                        run_spinner.visible = False
                         run_button = ui.button('Run', icon='send', on_click=lambda: start_main_run_thread(idea_input.value, name_input.value, run_button, run_spinner)).bind_enabled_from(idea_input, 'value').bind_enabled_from(name_input, 'value').props('color=primary')
                         ui.button('Clear', icon='clear', on_click=lambda: idea_input.set_value(None) or name_input.set_value(None)).props('color=negative').bind_enabled_from(run_button, 'enabled')
                         # ui.spinner(size='lg').bind_visibility_from(run_button, 'enabled')
