@@ -15,7 +15,7 @@ def save(abst, intro, sys_comp, sys_prin, res_ana, inn_poi, mar_pro, conc, bib, 
     os.makedirs(folder_path)
 
     # Save the abst as .txt file
-    abst_file_name = f"abst_{name}.txt"
+    abst_file_name = f"0_abst_{name}.txt"
     if os.path.exists(os.path.join(folder_path, abst_file_name)):
         # Find the next available file name
         i = 2
@@ -29,7 +29,7 @@ def save(abst, intro, sys_comp, sys_prin, res_ana, inn_poi, mar_pro, conc, bib, 
         abst_file.write(abst)
         
     # Save the intro as .txt file
-    intro_file_name = f"intro_{name}.txt"
+    intro_file_name = f"1_intro_{name}.txt"
     if os.path.exists(os.path.join(folder_path, intro_file_name)):
         # Find the next available file name
         i = 2
@@ -43,7 +43,7 @@ def save(abst, intro, sys_comp, sys_prin, res_ana, inn_poi, mar_pro, conc, bib, 
         intro_file.write(intro)
         
     # Save the sys_comp as .txt file
-    sys_comp_file_name = f"sys_comp_{name}.txt"
+    sys_comp_file_name = f"2_sys_comp_{name}.txt"
     if os.path.exists(os.path.join(folder_path, sys_comp_file_name)):
         # Find the next available file name
         i = 2
@@ -57,7 +57,7 @@ def save(abst, intro, sys_comp, sys_prin, res_ana, inn_poi, mar_pro, conc, bib, 
         sys_comp_file.write(sys_comp)
         
     # Save the sys_prin as .txt file
-    sys_prin_file_name = f"sys_prin_{name}.txt"
+    sys_prin_file_name = f"3_sys_prin_{name}.txt"
     if os.path.exists(os.path.join(folder_path, sys_prin_file_name)):
         # Find the next available file name
         i = 2
@@ -71,7 +71,7 @@ def save(abst, intro, sys_comp, sys_prin, res_ana, inn_poi, mar_pro, conc, bib, 
         sys_prin_file.write(sys_prin)
         
     # Save the res_ana as .txt file
-    res_ana_file_name = f"res_ana_{name}.txt"
+    res_ana_file_name = f"4_res_ana_{name}.txt"
     if os.path.exists(os.path.join(folder_path, res_ana_file_name)):
         # Find the next available file name
         i = 2
@@ -85,7 +85,7 @@ def save(abst, intro, sys_comp, sys_prin, res_ana, inn_poi, mar_pro, conc, bib, 
         res_ana_file.write(res_ana)
         
     # Save the inn_poi as .txt file
-    inn_poi_file_name = f"inn_poi_{name}.txt"
+    inn_poi_file_name = f"5_inn_poi_{name}.txt"
     if os.path.exists(os.path.join(folder_path, inn_poi_file_name)):
         # Find the next available file name
         i = 2
@@ -99,7 +99,7 @@ def save(abst, intro, sys_comp, sys_prin, res_ana, inn_poi, mar_pro, conc, bib, 
         inn_poi_file.write(inn_poi)
     
     # Save the mar_pro as .txt file
-    mar_pro_file_name = f"mar_pro_{name}.txt"
+    mar_pro_file_name = f"6_mar_pro_{name}.txt"
     if os.path.exists(os.path.join(folder_path, mar_pro_file_name)):
         # Find the next available file name
         i = 2
@@ -113,7 +113,7 @@ def save(abst, intro, sys_comp, sys_prin, res_ana, inn_poi, mar_pro, conc, bib, 
         mar_pro_file.write(mar_pro)
     
     # Save the conc as .txt file
-    conc_file_name = f"conc_{name}.txt"
+    conc_file_name = f"7_conc_{name}.txt"
     if os.path.exists(os.path.join(folder_path, conc_file_name)):
         # Find the next available file name
         i = 2
@@ -127,7 +127,7 @@ def save(abst, intro, sys_comp, sys_prin, res_ana, inn_poi, mar_pro, conc, bib, 
         conc_file.write(conc)
         
     # Save the bib as .txt file
-    bib_file_name = f"bib_{name}.txt"
+    bib_file_name = f"8_bib_{name}.txt"
     if os.path.exists(os.path.join(folder_path, bib_file_name)):
         # Find the next available file name
         i = 2
