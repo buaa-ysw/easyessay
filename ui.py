@@ -5,6 +5,7 @@ import os
 import sys
 import queue
 import threading
+import subprocess
 
 from nicegui import ui
 from init import output_path
@@ -24,25 +25,34 @@ def update_log_from_queue(code_log): # 从队列中读取消息并将其输出�
         message = output_queue.get()
         code_log.push(message)
 
-def main_run_thread(idea, name, btn: ui.button, spn: ui.spinner):
-    btn.disable()
+def main_run_thread(idea, name, run_btn: ui.button, stop_btn: ui.button, spn: ui.spinner):
+    run_btn.disable()
+    stop_btn.visible = True
     spn.visible = True
     try:
-        # print(idea+name)
-        # import time
-        # time.sleep(2)  # 假设线程需要执行 5 秒
-        main_run(idea, name)
+        while not should_stop:
+            main_run(idea, name)
 
     finally:
         # 无论线程如何结束，都会执行此处的代码
-        btn.enable()
+        run_btn.enable()
         spn.visible = False
+        stop_btn.visible = False
         pass
 
-def start_main_run_thread(idea, name, btn: ui.button, spn: ui.spinner):
+def stop_main_thread():
+    ui.notify('Rebooting...')
+    # python = sys.executable
+    # subprocess.call([python, "ui.py"])
+    # sys.exit()
+
+def start_main_run_thread(idea, name, run_btn: ui.button, stop_btn: ui.button, spn: ui.spinner):
+    global should_stop
+    should_stop = False
     ui.notify('Thread started')
-    thread = threading.Thread(target=main_run_thread, args=(idea, name, btn, spn))
+    thread = threading.Thread(target=main_run_thread, args=(idea, name, run_btn, stop_btn, spn))
     thread.start()
+    thread._stop = True
 
 def sync_info():
     url = "https://api.github.com/repos/buaa-ysw/easyessay"
@@ -165,14 +175,15 @@ with ui.splitter(value=12).classes('w-full h-full') as splitter:
                     with ui.row():
                         run_spinner = ui.spinner(size='lg')
                         run_spinner.visible = False
-                        run_button = ui.button('Run', icon='send', on_click=lambda: start_main_run_thread(idea_input.value, name_input.value, run_button, run_spinner)).bind_enabled_from(idea_input, 'value').bind_enabled_from(name_input, 'value').props('color=primary')
-                        ui.button('Clear', icon='clear', on_click=lambda: idea_input.set_value(None) or name_input.set_value(None)).props('color=negative').bind_enabled_from(run_button, 'enabled')
+                        run_button = ui.button('Run', icon='send', on_click=lambda: start_main_run_thread(idea_input.value, name_input.value, run_button, stop_button, run_spinner)).bind_enabled_from(idea_input, 'value').bind_enabled_from(name_input, 'value').props('color=primary')
+                        stop_button = ui.button('Stop', icon='do_not_disturb_on', on_click=lambda: stop_main_thread()).props('color=negative')
+                        stop_button.visible = False
                         # ui.spinner(size='lg').bind_visibility_from(run_button, 'enabled')
                 
                 with ui.expansion('Log', icon='code', on_value_change=on_expansion).classes('w-full h-100') as log_expansion:
                     with ui.row():
                         ui.button('Copy', icon='content_copy').props('flat color=primary')
-                        ui.button('Clear', icon='clear', on_click=lambda: code_log.clear()).props('flat color=negative')
+                        ui.button('Clear', icon='clear_all', on_click=lambda: code_log.clear()).props('flat color=negative')
                     code_log = ui.log(max_lines=100).classes('w-full h-full')
 
             #---------------------------------------------------------------------------------------------------------------------------------------------------#
