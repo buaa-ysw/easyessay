@@ -2,30 +2,42 @@ import requests
 from datetime import datetime
 import pytz
 import os
+import sys
+import queue  # 使用队列来在不同线程间传递数据
 import threading
 
 from nicegui import ui
 from init import output_path
 from main import main_run
 from function import Test
-import sys
-from io import StringIO
 
-from contextlib import contextmanager
-@contextmanager
-def disable(button: ui.button):
-    button.disable()
-    try:
-        yield
-    finally:
-        button.enable()
+# 创建队列用于在线程间传递数据
+output_queue = queue.Queue()
 
-async def A_Test(button: ui.button, idea_input: ui.input, name_input: ui.input, log: ui.log) -> None:
-    with disable(button):
-        result = await Test(idea_input.value, name_input.value)
-        log.push('Test Done' + str(result))
+# 重定向标准输出流到队列中
+class StdoutRedirector:
+    def write(self, message):
+        output_queue.put(message)
 
+    def flush(self):
+        pass
 
+    def isatty(self):
+        return False
+
+# 将标准输出流重定向到队列
+sys.stdout = StdoutRedirector()
+
+# 从队列中读取消息并将其输出到日志
+def update_log_from_queue(code_log):
+    while True:
+        message = output_queue.get()
+        code_log.push(message)
+
+# 函数用于启动 main_run 的线程
+def start_main_run_thread(idea, name):
+    thread = threading.Thread(target=main_run, args=(idea, name))
+    thread.start()
 
 def sync_info():
     url = "https://api.github.com/repos/buaa-ysw/easyessay"
@@ -118,7 +130,7 @@ with ui.splitter(value=12).classes('w-full h-full') as splitter:
                         # ui.button(icon='send', on_click=lambda: ).props('flat color=primary').bind_visibility_from(main_input, 'value')
 
                     with ui.row():
-                        run_button = ui.button('Run', icon='send', on_click=lambda e: A_Test(e.sender, idea_input, name_input, code_log)).bind_enabled_from(idea_input, 'value').bind_enabled_from(name_input, 'value').props('color=primary')
+                        run_button = ui.button('Run', icon='send', on_click=lambda: start_main_run_thread(idea_input.value, name_input.value)).bind_enabled_from(idea_input, 'value').bind_enabled_from(name_input, 'value').props('color=primary')
                         ui.button('Clear', icon='clear', on_click=lambda: idea_input.set_value(None) or name_input.set_value(None)).props('color=negative').bind_enabled_from(run_button, 'enabled')
                 
                 with ui.expansion('Log', icon='code', on_value_change=on_expansion).classes('w-full h-100') as log_expansion:
@@ -197,5 +209,10 @@ with ui.header(elevated=True).style('background-color: #3874c8').classes('items-
     ui.space()
     # ui.button(icon='dark_mode', on_click=lambda: dark.toggle()).props('flat color=white no-border')
     DarkButton('')
+
+# 创建一个新线程来从队列中读取消息并将其输出到日志中
+update_thread = threading.Thread(target=update_log_from_queue, args=(code_log,))
+update_thread.daemon = True
+update_thread.start()
 
 ui.run()
