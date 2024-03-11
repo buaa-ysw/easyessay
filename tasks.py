@@ -37,7 +37,7 @@ class EssayTasks:
     def essay_writing_task(self, agent, topic, name, outline):
         return Task(
             description=dedent(f"""
-                Write an academic essay on the topic "{topic}" with the name "{name}" based on the provided outline: \n"{outline}"\n
+                Write an academic essay on the topic "{topic}" with the name "{name}" based on the provided outline.
                 Ensure the essay adheres to academic writing standards, incorporates relevant research findings, and emphasizes innovative insights and perspectives.
                 {self.__tip_section()}
                 """),
@@ -45,13 +45,14 @@ class EssayTasks:
                 A well-written academic essay that effectively conveys the argument outlined, incorporates relevant research, and presents innovative insights and perspectives on the topic.
                 """),
             async_execution=True,
-            agent=agent
+            agent=agent,
+            context=outline
         )
 
     def revision_task(self, agent, topic, name, essay):
         return Task(
             description=dedent(f"""
-                Review and revise the essay "{essay}" to ensure clarity, coherence, and adherence to academic standards. 
+                Review and revise the essay to ensure clarity, coherence, and adherence to academic standards. 
                 Make any necessary edits to improve the overall quality and effectiveness of the essay.
                 The topic of the essay is "{topic}" and the name of the essay is "{name}".
                 {self.__tip_section()}
@@ -60,6 +61,7 @@ class EssayTasks:
                 A revised version of the essay that demonstrates improved clarity, coherence, and adherence to academic standards.
                 """),
             async_execution=True,
-            agent=agent
+            agent=agent,
+            context=essay
         )
 
