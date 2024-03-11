@@ -22,23 +22,27 @@ class EssayCrew:
         revision_savant = agents.RevisionSavant()
 
         # Define tasks
-        research_task = tasks.research_task(essay_investigator)
+        research_task = tasks.research_task(essay_investigator, self.idea)
         outline_task = tasks.outline_task(outline_architect, self.idea)
-        essay_writing_task = tasks.essay_writing_task(essay_craftsman, self.idea, self.name, outline_task.expected_output)
-        revision_task = tasks.revision_task(revision_savant, self.idea, self.name, essay_writing_task.expected_output)
+        
+        context = [outline_task]
+        essay_writing_task = tasks.essay_writing_task(essay_craftsman, self.idea, self.name, context)
+        
+        context = [essay_writing_task]
+        revision_task = tasks.revision_task(revision_savant, self.idea, self.name, context)
         
         # Define crew
         crew = Crew(
             agents=[essay_investigator, outline_architect, essay_craftsman, revision_savant],
             tasks=[research_task, outline_task, essay_writing_task, revision_task],
             manager_llm=self.model,
-            process=Process.hierarchical,
+            process=Process.sequential,
             verbose=2,
         )
 
-        save(research_task.expected_output, outline_task.expected_output, essay_writing_task.expected_output, revision_task.expected_output, self.name)
-        print(crew.usage_metrics)
         result = crew.kickoff()
+        # save(research_task.output.raw_output, outline_task.output.raw_output, essay_writing_task.output.raw_output, result, self.name)
+        print(crew.usage_metrics)
         return result
 
 if __name__ == "__main__":

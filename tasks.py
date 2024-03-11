@@ -5,12 +5,13 @@ class EssayTasks:
     def __tip_section(self):
         return "[Please consult 'EssayInvestigator' for assistance with any academic questions!]\n[Please consult 'EssayInvestigator' for the latest research on this topic!]"
     
-    def research_task(self, agent):
+    def research_task(self, agent, topic):
         return Task(
             description=dedent(f"""
                 Recieve questions from 'OutlineArchitect''Essay Craftsman' and 'RevisionSavant', 
                 research and provide them with a comprehensive and detailed research report,
                 and attach the correct source to each piece of information you investigate.
+                The topic of the research is "{topic}".
                 """),
             expected_output=dedent("""
                 A comprehensive research report containing detailed findings to guide the writing process.
