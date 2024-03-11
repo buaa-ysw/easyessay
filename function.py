@@ -12,6 +12,7 @@ def save(research, outline, essay, outcome, name):
             if not os.path.exists(folder_path):
                 break
             i += 1
+    os.makedirs(folder_path)
 
     # Save the research as .txt file
     research_file_name = f"research_{name}.txt"
