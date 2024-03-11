@@ -85,49 +85,54 @@ with ui.splitter(value=12).classes('w-full h-full') as splitter:
             with ui.tab_panel(playground):
                 with ui.expansion('Easy Essay', icon='token', on_value_change=on_expansion).classes('w-full') as main_expansion:
                     idea_options = ['Earthquake', 'Typhoon', 'Awesome']
-                    with ui.input(label='Input an idea', placeholder='start typing', autocomplete=idea_options).classes('w-full') as main_input:
-                        ui.button(icon='clear', on_click=lambda: main_input.set_value(None)).props('flat color=warning').bind_visibility_from(main_input, 'value')
+                    with ui.input(label='Input an idea', placeholder='start typing', autocomplete=idea_options).classes('w-full') as idea_input:
+                        ui.button(icon='clear', on_click=lambda: idea_input.set_value(None)).props('flat color=negative').bind_visibility_from(idea_input, 'value')
                         # ui.button(icon='send', on_click=lambda: ).props('flat color=primary').bind_visibility_from(main_input, 'value')
 
                     name_options = ['Earthquake', 'Typhoon', 'Awesome']
-                    with ui.input(label='Input a name', placeholder='start typing', autocomplete=name_options).classes('w-full') as main_input:
-                        ui.button(icon='clear', on_click=lambda: main_input.set_value(None)).props('flat color=warning').bind_visibility_from(main_input, 'value')
+                    with ui.input(label='Input a name', placeholder='start typing', autocomplete=name_options).classes('w-full') as name_input:
+                        ui.button(icon='clear', on_click=lambda: name_input.set_value(None)).props('flat color=negative').bind_visibility_from(name_input, 'value')
                         # ui.button(icon='send', on_click=lambda: ).props('flat color=primary').bind_visibility_from(main_input, 'value')
+
+                    with ui.row():
+                        ui.button('Run', icon='send', on_click=lambda: main_run_thread(idea_input.value, name_input.value)).bind_enabled_from(idea_input, name_input)
+                        ui.button('Clear', icon='clear', on_click=lambda: idea_input.set_value(None) or name_input.set_value(None)).props('color=negative').bind_enabled_from(idea_input, name_input)
 
             #---------------------------------------------------------------------------------------------------------------------------------------------------#
                     
             with ui.tab_panel(galley):
                 ui.label('Galley').classes('text-h6')
-                ui.label('History of Satellite-Dispatch processing...')
-                ui.label('Galley').classes('text-h6')
-                ui.label('History of Satellite-Dispatch processing...')
+                ui.label('History of Eassy processing...')
                 
-                # 获取output_path路径下的所有文件夹
-                folders = [folder for folder in os.listdir(output_path) if os.path.isdir(os.path.join(output_path, folder))]
+                try:
+                    # 获取output_path路径下的所有文件夹
+                    folders = [folder for folder in os.listdir(output_path) if os.path.isdir(os.path.join(output_path, folder))]
 
-                # 为每个文件夹创建一个ui.expansion
-                for folder in folders:
-                    with ui.expansion(folder, icon='folder').classes('w-full'):
-                        # 获取output_path + folder文件夹下的所有文件
-                        folder_path = os.path.join(output_path, folder)
-                        files = [file for file in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, file))]
-                        # 为每个文件创建一个ui.expansion
-                        for file in files:
-                            file_path = os.path.join(folder_path, file)
-                            file_extension = os.path.splitext(file)[1]
-                            if file_extension == '.md':
-                                icon = 'summarize'
-                            elif file_extension == '.txt':
-                                icon = 'text_snippet'
-                            else:
-                                icon = 'file'
-                                pass
-                            # Add file content here
-                            
-                            with open(file_path, 'r') as f:
-                                content = f.read()
-                            with ui.expansion(file, icon=icon).classes('w-full'):
-                                ui.markdown(content)
+                    # 为每个文件夹创建一个ui.expansion
+                    for folder in folders:
+                        with ui.expansion(folder, icon='folder').classes('w-full'):
+                            # 获取output_path + folder文件夹下的所有文件
+                            folder_path = os.path.join(output_path, folder)
+                            files = [file for file in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, file))]
+                            # 为每个文件创建一个ui.expansion
+                            for file in files:
+                                file_path = os.path.join(folder_path, file)
+                                file_extension = os.path.splitext(file)[1]
+                                if file_extension == '.md':
+                                    icon = 'summarize'
+                                elif file_extension == '.txt':
+                                    icon = 'text_snippet'
+                                else:
+                                    icon = 'file'
+                                    pass
+                                # Add file content here
+                                
+                                with open(file_path, 'r') as f:
+                                    content = f.read()
+                                with ui.expansion(file, icon=icon).classes('w-full'):
+                                    ui.markdown(content)
+                except Exception as e:
+                    ui.notify('Error: ' + str(e), close_button='X', type='negative')
 
             #---------------------------------------------------------------------------------------------------------------------------------------------------#
                 
