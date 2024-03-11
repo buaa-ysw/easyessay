@@ -16,34 +16,48 @@ class EssayCrew:
         tasks = EssayTasks()
 
         # Define agents
-        essay_investigator = agents.EssayInvestigator()
-        outline_architect = agents.OutlineArchitect()
-        essay_craftsman = agents.EssayCraftsman()
-        revision_savant = agents.RevisionSavant()
+        abstract_writer = agents.abstract_writing_agent()
+        introduction_writer = agents.introduction_writing_agent()
+        system_composition_writer = agents.system_composition_writing_agent()
+        system_principle_writer = agents.system_principle_writing_agent()
+        result_analysis_writer = agents.result_analysis_writing_agent()
+        innovation_points_writer = agents.innovation_points_writing_agent()
+        market_prospect_writer = agents.market_prospect_writing_agent()
+        conclusion_writer = agents.conclusion_writing_agent()
+        bibliography_writer = agents.bibliography_writing_agent()
 
         # Define tasks
-        research_task = tasks.research_task(essay_investigator, self.idea)
-        outline_task = tasks.outline_task(outline_architect, self.idea)
-        
-        context = [outline_task]
-        essay_writing_task = tasks.essay_writing_task(essay_craftsman, self.idea, self.name, context)
-        
-        context = [essay_writing_task]
-        revision_task = tasks.revision_task(revision_savant, self.idea, self.name, context)
+        abstract_task = tasks.abstract_writing_task(abstract_writer, self.idea, self.name)
+        context = [abstract_task]
+        introduction_task = tasks.introduction_writing_task(introduction_writer, self.idea, self.name, context)
+        context = [context, introduction_task]
+        system_composition_task = tasks.system_composition_writing_task(system_composition_writer, self.idea, self.name, context)
+        context = [context, system_composition_task]
+        system_principle_task = tasks.system_principle_writing_task(system_principle_writer, self.idea, self.name, context)
+        context = [context, system_principle_task]
+        result_analysis_task = tasks.result_analysis_writing_task(result_analysis_writer, self.idea, self.name, context)
+        context = [context, result_analysis_task]
+        innovation_points_task = tasks.innovation_points_writing_task(innovation_points_writer, self.idea, self.name, context)
+        context = [context, innovation_points_task]
+        market_prospect_task = tasks.market_prospect_writing_task(market_prospect_writer, self.idea, self.name, context)
+        context = [context, market_prospect_task]
+        conclusion_task = tasks.conclusion_writing_task(conclusion_writer, self.idea, self.name, context)
+        context = [context, conclusion_task]
+        bibliography_task = tasks.bibliography_writing_task(bibliography_writer, self.idea, self.name, context)
         
         # Define crew
         crew = Crew(
-            agents=[essay_investigator, outline_architect, essay_craftsman, revision_savant],
-            tasks=[research_task, outline_task, essay_writing_task, revision_task],
+            agents=[abstract_writer, introduction_writer, system_composition_writer, system_principle_writer, result_analysis_writer, innovation_points_writer, market_prospect_writer, conclusion_writer, bibliography_writer],
+            tasks=[abstract_task, introduction_task, system_composition_task, system_principle_task, result_analysis_task, innovation_points_task, market_prospect_task, conclusion_task, bibliography_task],
             manager_llm=self.model,
             process=Process.sequential,
             verbose=2,
         )
 
-        result = crew.kickoff()
-        save(research_task.output.raw_output, outline_task.output.raw_output, essay_writing_task.output.raw_output, result, self.name)
+        # Run the crew
+        crew.kickoff()
+        save(abstract_task.output.raw_output, introduction_task.output.raw_output, system_composition_task.output.raw_output, system_principle_task.output.raw_output, result_analysis_task.output.raw_output, innovation_points_task.output.raw_output, market_prospect_task.output.raw_output, conclusion_task.output.raw_output, bibliography_task.output.raw_output, self.name)
         print(crew.usage_metrics)
-        return result
 
 def main_run(idea, name):
     essay_crew = EssayCrew(idea, name)
@@ -55,9 +69,9 @@ if __name__ == "__main__":
     print("---------------")
     idea = input(dedent("""What's your idea?"""))
     name = input(dedent("""Name the essay:"""))
-    result = main_run(idea, name)
+    essay_crew = EssayCrew(idea, name)
+    result = essay_crew.run()
     print("----------------------")
     print("######################")
     print("## Essay Completed! ##")
     print("######################\n")
-    print(result)
