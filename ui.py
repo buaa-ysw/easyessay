@@ -3,40 +3,45 @@ from datetime import datetime
 import pytz
 import os
 import sys
-import queue  # 使用队列来在不同线程间传递数据
+import queue
 import threading
 
 from nicegui import ui
 from init import output_path
 from main import main_run
-from function import Test
 
-# 创建队列用于在线程间传递数据
-output_queue = queue.Queue()
-
-# 重定向标准输出流到队列中
-class StdoutRedirector:
+output_queue = queue.Queue() # 创建队列用于在线程间传递数据
+class StdoutRedirector: # 重定向标准输出流到队列中
     def write(self, message):
         output_queue.put(message)
-
     def flush(self):
         pass
-
     def isatty(self):
         return False
-
-# 将标准输出流重定向到队列
-sys.stdout = StdoutRedirector()
-
-# 从队列中读取消息并将其输出到日志
-def update_log_from_queue(code_log):
+sys.stdout = StdoutRedirector() # 将标准输出流重定向到队列
+def update_log_from_queue(code_log): # 从队列中读取消息并将其输出到日志
     while True:
         message = output_queue.get()
         code_log.push(message)
 
-# 函数用于启动 main_run 的线程
-def start_main_run_thread(idea, name):
-    thread = threading.Thread(target=main_run, args=(idea, name))
+def main_run_thread(idea, name, btn: ui.button, spn: ui.spinner):
+    btn.disable()
+    spn.visible = True
+    try:
+        # print(idea+name)
+        # import time
+        # time.sleep(2)  # 假设线程需要执行 5 秒
+        main_run(idea, name)
+
+    finally:
+        # 无论线程如何结束，都会执行此处的代码
+        btn.enable()
+        spn.visible = False
+        pass
+
+def start_main_run_thread(idea, name, btn: ui.button, spn: ui.spinner):
+    ui.notify('Thread started')
+    thread = threading.Thread(target=main_run_thread, args=(idea, name, btn, spn))
     thread.start()
 
 def sync_info():
@@ -60,23 +65,51 @@ def sync_info():
         name_title = "Satellite Dispatch [Error]"
     return build_time,name_title
 
+def sync_galley():
+    try:
+        galley_container.clear()
+
+        # 获取output_path路径下的所有文件夹
+        folders = [folder for folder in os.listdir(output_path) if os.path.isdir(os.path.join(output_path, folder))]
+
+        with galley_container:
+            # 为每个文件夹创建一个ui.expansion
+            for folder in folders:
+                with ui.expansion(folder, icon='folder').classes('w-full'):
+                    # 获取output_path + folder文件夹下的所有文件
+                    folder_path = os.path.join(output_path, folder)
+                    files = [file for file in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, file))]
+                    # 为每个文件创建一个ui.expansion
+                    for file in files:
+                        file_path = os.path.join(folder_path, file)
+                        file_extension = os.path.splitext(file)[1]
+                        if file_extension == '.md':
+                            icon = 'summarize'
+                        elif file_extension == '.txt':
+                            icon = 'text_snippet'
+                        else:
+                            icon = 'file'
+                            pass
+                        # Add file content here
+                        
+                        with open(file_path, 'r') as f:
+                            content = f.read()
+                        with ui.expansion(file, icon=icon).classes('w-full'):
+                            ui.markdown(content)
+    except Exception as e:
+        ui.notify('Error: ' + str(e), close_button='X', type='negative')
+
 build_time, name_title = sync_info()
-
-
 
 # https://fonts.google.com/icons?icon.set=Material+Icons
 
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------#
+# UI
+# ---------------------------------------------------------------------------------------------------------------------------------------------------#
+
+
 dark = ui.dark_mode()
-
-# with ui.left_drawer(value=False, bordered=True).style('background-color: #ebf1fa').props('bordered') as ui_left_drawer:
-#     ui.button('Dash Board').props('flat color=black')
-#     ui.button('Playground').props('flat color=black')
-#     ui.button('Gallery').props('flat color=black')
-
-with ui.footer().style('background-color: #3874c8') as ui_footer:
-    ui.label('Last build: ').props('color=white')
-    ui.label(build_time).props('color=white')
 
 def on_expansion():
     if dark.value:
@@ -112,7 +145,7 @@ with ui.splitter(value=12).classes('w-full h-full') as splitter:
             #---------------------------------------------------------------------------------------------------------------------------------------------------#
 
             with ui.tab_panel(dash_board):
-                # ui.label('Dash Board').classes('text-h4')
+                # ui.label('Dash Board').classes('text-h5')
                 ui.label('Content of Dash Board')
             
             #---------------------------------------------------------------------------------------------------------------------------------------------------#
@@ -130,8 +163,10 @@ with ui.splitter(value=12).classes('w-full h-full') as splitter:
                         # ui.button(icon='send', on_click=lambda: ).props('flat color=primary').bind_visibility_from(main_input, 'value')
 
                     with ui.row():
-                        run_button = ui.button('Run', icon='send', on_click=lambda: start_main_run_thread(idea_input.value, name_input.value)).bind_enabled_from(idea_input, 'value').bind_enabled_from(name_input, 'value').props('color=primary')
+                        run_spinner = ui.spinner(size='lg').visible = False
+                        run_button = ui.button('Run', icon='send', on_click=lambda: start_main_run_thread(idea_input.value, name_input.value, run_button, run_spinner)).bind_enabled_from(idea_input, 'value').bind_enabled_from(name_input, 'value').props('color=primary')
                         ui.button('Clear', icon='clear', on_click=lambda: idea_input.set_value(None) or name_input.set_value(None)).props('color=negative').bind_enabled_from(run_button, 'enabled')
+                        # ui.spinner(size='lg').bind_visibility_from(run_button, 'enabled')
                 
                 with ui.expansion('Log', icon='code', on_value_change=on_expansion).classes('w-full h-100') as log_expansion:
                     with ui.row():
@@ -142,44 +177,23 @@ with ui.splitter(value=12).classes('w-full h-full') as splitter:
             #---------------------------------------------------------------------------------------------------------------------------------------------------#
                     
             with ui.tab_panel(galley):
-                ui.label('Galley').classes('text-h6')
-                ui.label('History of Eassy processing...')
-                
-                try:
-                    # 获取output_path路径下的所有文件夹
-                    folders = [folder for folder in os.listdir(output_path) if os.path.isdir(os.path.join(output_path, folder))]
-
-                    # 为每个文件夹创建一个ui.expansion
-                    for folder in folders:
-                        with ui.expansion(folder, icon='folder').classes('w-full'):
-                            # 获取output_path + folder文件夹下的所有文件
-                            folder_path = os.path.join(output_path, folder)
-                            files = [file for file in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, file))]
-                            # 为每个文件创建一个ui.expansion
-                            for file in files:
-                                file_path = os.path.join(folder_path, file)
-                                file_extension = os.path.splitext(file)[1]
-                                if file_extension == '.md':
-                                    icon = 'summarize'
-                                elif file_extension == '.txt':
-                                    icon = 'text_snippet'
-                                else:
-                                    icon = 'file'
-                                    pass
-                                # Add file content here
-                                
-                                with open(file_path, 'r') as f:
-                                    content = f.read()
-                                with ui.expansion(file, icon=icon).classes('w-full'):
-                                    ui.markdown(content)
-                except Exception as e:
-                    ui.notify('Error: ' + str(e), close_button='X', type='negative')
+                with ui.row():
+                    ui.label('Galley').classes('text-h5')
+                    ui.space()
+                    ui.button('Refresh', icon='refresh', on_click=lambda: sync_galley()).props('color=primary')
+                ui.label('History of Eassy processing...')     
+                galley_container = ui.column().classes('w-full h-full')
+                sync_galley()
 
             #---------------------------------------------------------------------------------------------------------------------------------------------------#
                 
             with ui.tab_panel(settings):
                 # ui.label('Settings').classes('text-h4')
                 ui.label('Content of settings')
+
+with ui.footer().style('background-color: #3874c8') as ui_footer:
+    ui.label('Last build: ').props('color=white')
+    ui.label(build_time).props('color=white')
 
 class DarkButton(ui.button):
     def __init__(self, *args, **kwargs) -> None:
