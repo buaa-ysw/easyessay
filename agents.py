@@ -14,7 +14,7 @@ class EssayAgents:
                 Your task is to identify the main points of the article by researching the topic of the article as well as studying the latest research papers and writing a complete and logical abstract.
                 Your abstract will be the basis for the outline of the article. So, be sure to do a good job! You are the best!
                 """),
-            tools=[search_tool],
+            tools=[pdf_search_tool_OurProjectProgress],
             verbose=True,
             llm=self.model,
             memory=True,
@@ -32,7 +32,7 @@ class EssayAgents:
                 Your task is to craft a compelling introduction that captures the reader's attention, introduces key concepts, and outlines the structure of the essay.
                 Your introduction will serve as a roadmap for the rest of the essay. So, be sure to do a good job! You are the best!
                 """),
-            tools=[search_tool],
+            tools=[pdf_search_tool_OurProjectProgress, pdf_search_tool_WirelessChargReview, web_search_tool],
             verbose=True,
             llm=self.model,
             memory=True,
@@ -50,7 +50,7 @@ class EssayAgents:
                 Your task is to develop a comprehensive system composition that outlines the key components, their relationships, and how they contribute to the overall project goals.
                 Your system composition will serve as a blueprint for the project implementation. So, be sure to do a good job! You are the best!
                 """),
-            tools=[search_tool],
+            tools=[pdf_search_tool_OurProjectProgress, pdf_search_tool_WirelessPowerTransfer],
             verbose=True,
             llm=self.model,
             memory=True,
@@ -68,7 +68,7 @@ class EssayAgents:
                 Your task is to articulate clear and concise system principles that reflect the project's goals, constraints, and requirements.
                 Your system principles will guide decision-making throughout the project lifecycle, ensuring coherence and consistency in the system design and implementation. So, be sure to do a good job! You are the best!
                 """),
-            tools=[search_tool],
+            tools=[pdf_search_tool_OurProjectProgress, pdf_search_tool_WirelessPowerTransfer, pdf_search_tool_WirelessChargControl, web_search_tool],
             verbose=True,
             llm=self.model,
             memory=True,
@@ -86,7 +86,7 @@ class EssayAgents:
                 Your task is to simulate actual work processes and analyze the results of the project, identify patterns or trends, and draw meaningful conclusions.
                 Your result analysis will provide valuable insights into the significance and implications of the project findings. So, be sure to do a good job! You are the best!
                 """),
-            tools=[search_tool],
+            tools=[pdf_search_tool_OurProjectProgress, pdf_search_tool_WirelessPowerTransfer],
             verbose=True,
             llm=self.model,
             memory=True,
@@ -104,7 +104,7 @@ class EssayAgents:
                 Your task is to identify and articulate the innovation points within the project, highlighting their potential impact and significance.
                 Your insights will contribute to the project's distinctiveness and potential for success by fostering a culture of creativity and forward-thinking. So, be sure to do a good job! You are the best!
                 """),
-            tools=[search_tool],
+            tools=[pdf_search_tool_OurProjectProgress, web_search_tool],
             verbose=True,
             llm=self.model,
             memory=True,
@@ -122,7 +122,7 @@ class EssayAgents:
                 Your task is to analyze and outline the market prospects for the project innovations discussed in the essay, highlighting their potential impact and opportunities for growth.
                 Your insights will provide valuable information for decision-makers and stakeholders, guiding strategic planning and resource allocation. So, be sure to do a good job! You are the best!
                 """),
-            tools=[search_tool],
+            tools=[pdf_search_tool_OurProjectProgress, web_search_tool],
             verbose=True,
             llm=self.model,
             memory=True,
@@ -140,7 +140,7 @@ class EssayAgents:
                 Your task is to craft a compelling conclusion that effectively wraps up the essay, reinforces the main arguments, and leaves a memorable impact.
                 Your conclusion should provide a sense of closure while emphasizing the significance of the essay's content. So, be sure to do a good job! You are the best!
                 """),
-            tools=[search_tool],
+            tools=[pdf_search_tool_OurProjectProgress],
             verbose=True,
             llm=self.model,
             memory=True,
@@ -158,7 +158,7 @@ class EssayAgents:
                 Your task is to create a comprehensive bibliography that includes all the relevant sources used in the essay, formatted correctly according to the specified citation style.
                 Your bibliography will provide readers with the necessary information to locate and verify the sources referenced in the essay. So, be sure to do a good job! You are the best!
                 """),
-            tools=[search_tool],
+            tools=[pdf_search_tool_OurProjectProgress, pdf_search_tool_WirelessPowerTransfer, pdf_search_tool_WirelessChargControl, pdf_search_tool_WirelessChargReview],
             verbose=True,
             llm=self.model,
             memory=True,

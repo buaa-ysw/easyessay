@@ -15,9 +15,13 @@ from langchain_openai import ChatOpenAI
 # search_tool = GoogleSerperAPIWrapper()
 # google_search_tool = [Tool(name="Google Search", func=search_tool.run, description="Search-based queries")]
 
-from crewai_tools import SerperDevTool
+from crewai_tools import SerperDevTool, PDFSearchTool
 os.environ["SERPER_API_KEY"] = "f2262d553f5691749a5420e2a5d3a2b36c84aa62" # serper.dev API key
-search_tool = SerperDevTool()
+web_search_tool = SerperDevTool()
+pdf_search_tool_WirelessChargReview = PDFSearchTool(pdf="pdf\A Review on UAV Wireless Charging.pdf")
+pdf_search_tool_WirelessPowerTransfer = PDFSearchTool(pdf="pdf\Wireless Power Transfer for 3D Printed Unmanned Aerial Vehicle.pdf")
+pdf_search_tool_WirelessChargControl = PDFSearchTool(pdf="pdf\蛙跳式充电的无人机自主巡线...基于机器视觉的自动充电控制_刘杰荣.pdf")
+pdf_search_tool_OurProjectProgress = PDFSearchTool(pdf="pdf\组会0114.pdf")
 
 # 根据配置文件中的模型名字选择使用的模型 using_model
 using_model_name = os.getenv("USING_MODEL")
