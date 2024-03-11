@@ -1,0 +1,11 @@
+System Composition
+
+The drone rescue system based on autonomous identification and wireless charging integrates cutting-edge technologies to enhance the endurance and efficiency of rescue operations in complex and remote environments. The system comprises a self-assembled F450 quadcopter drone equipped with a Pixhawk flight control board, a Raspberry Pi onboard computer, an Intel435i camera, a Wireless Power Transfer (WPT) module, and an integrated solar power supply panel. The software components include Ubuntu18.04+, ros+mavros+px4 for precise flight control, and the OpenCV library for QR code identification to achieve autonomous landing in scenarios with limited power.
+
+To address the challenge of limited battery life in traditional UAVs, the project aims to establish charging stations in disaster-prone areas. These stations facilitate autonomous landing and wireless charging, allowing the drones to operate continuously without manual intervention. By utilizing renewable energy sources like solar power, the system reduces dependency on conventional power grids, ensuring a stable power supply during emergencies.
+
+The tasks involved in the project include autonomous takeoff and landing, autonomous target identification, and the design of wireless charging systems for both the drone and the base station. The autonomous identification and wireless charging technology utilized in this project are particularly suitable for maritime, desert, and forest environments, where traditional power sources may be limited or inaccessible.
+
+The innovative integration of advanced technologies in the drone rescue system aims to revolutionize rescue operations by improving endurance, efficiency, and autonomy. By leveraging autonomous identification and wireless charging, the system enhances the drone's capabilities and expands its application in challenging and remote rescue scenarios.
+
+Overall, the drone rescue system based on autonomous identification and wireless charging represents a significant advancement in rescue drone technology, offering a reliable and efficient solution for emergency response in diverse environments.

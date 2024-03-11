@@ -1,0 +1,11 @@
+1. Endurance Enhancement: The system principle prioritizes enhancing the endurance of the drone rescue system by implementing autonomous identification for target landing and wireless charging technology. This ensures the drone can operate continuously without manual intervention, improving its efficiency in rescue operations.
+
+2. Efficiency Optimization: The system principle emphasizes optimizing the efficiency of the drone rescue system by integrating renewable energy sources like solar power. By reducing dependency on traditional power grids, the system ensures a stable power supply during emergencies, enhancing the system's reliability.
+
+3. Autonomy Promotion: The system principle aims to promote autonomy in the drone rescue system by enabling autonomous takeoff and landing, autonomous target identification, and wireless charging design for both the drone and the base station. This autonomy enhances the system's capabilities in complex and remote rescue scenarios.
+
+4. Disaster-Prone Area Focus: The system principle focuses on establishing charging stations in disaster-prone areas to facilitate autonomous landing and wireless charging. By strategically locating these stations, the system can respond quickly and effectively in challenging environments, such as maritime, desert, and forest regions.
+
+5. Technology Integration: The system principle advocates for the seamless integration of advanced technologies, including the Pixhawk flight control board, Raspberry Pi onboard computer, Intel435i camera, WPT wireless charging module, and integrated solar power supply panel. This integration ensures a cohesive and efficient operation of the drone rescue system.
+
+6. Continuous Improvement: The system principle promotes a culture of continuous improvement by encouraging the exploration of new technologies and methodologies to further enhance the drone rescue system's performance and capabilities. By staying abreast of technological advancements, the system can adapt to changing operational needs and challenges.
