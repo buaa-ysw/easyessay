@@ -41,7 +41,7 @@ class EssayCrew:
         )
 
         result = crew.kickoff()
-        # save(research_task.output.raw_output, outline_task.output.raw_output, essay_writing_task.output.raw_output, result, self.name)
+        save(research_task.output.raw_output, outline_task.output.raw_output, essay_writing_task.output.raw_output, result, self.name)
         print(crew.usage_metrics)
         return result
 
