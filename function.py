@@ -1,6 +1,13 @@
 import os
 from init import *
 
+import asyncio
+
+async def Test(i, j):
+    await asyncio.sleep(2)
+    return i + j
+
+
 def save(research, outline, essay, outcome, name):
     # Check if the folder exists, and create it if it doesn't
     folder_path = output_path + "/" + name

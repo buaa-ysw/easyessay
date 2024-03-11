@@ -7,10 +7,25 @@ import threading
 from nicegui import ui
 from init import output_path
 from main import main_run
+from function import Test
+import sys
+from io import StringIO
 
-def main_run_thread(idea, name):
-    thread = threading.Thread(target=main_run, args=(idea, name))
-    thread.start()
+from contextlib import contextmanager
+@contextmanager
+def disable(button: ui.button):
+    button.disable()
+    try:
+        yield
+    finally:
+        button.enable()
+
+async def A_Test(button: ui.button, idea_input: ui.input, name_input: ui.input, log: ui.log) -> None:
+    with disable(button):
+        result = await Test(idea_input.value, name_input.value)
+        log.push('Test Done' + str(result))
+
+
 
 def sync_info():
     url = "https://api.github.com/repos/buaa-ysw/easyessay"
@@ -57,11 +72,19 @@ def on_expansion():
             main_expansion.style('background-color: #343434')
         else:
             main_expansion.style('background-color: transparent')
+        if log_expansion.value:
+            log_expansion.style('background-color: #343434')
+        else:
+            log_expansion.style('background-color: transparent')
     else:
         if main_expansion.value:
             main_expansion.style('background-color: #f0f0f0')
         else:
             main_expansion.style('background-color: transparent')
+        if log_expansion.value:
+            log_expansion.style('background-color: #f0f0f0')
+        else:
+            log_expansion.style('background-color: transparent')
 
 with ui.splitter(value=12).classes('w-full h-full') as splitter:
     with splitter.before:
@@ -95,8 +118,14 @@ with ui.splitter(value=12).classes('w-full h-full') as splitter:
                         # ui.button(icon='send', on_click=lambda: ).props('flat color=primary').bind_visibility_from(main_input, 'value')
 
                     with ui.row():
-                        ui.button('Run', icon='send', on_click=lambda: main_run_thread(idea_input.value, name_input.value)).bind_enabled_from(idea_input, name_input)
-                        ui.button('Clear', icon='clear', on_click=lambda: idea_input.set_value(None) or name_input.set_value(None)).props('color=negative').bind_enabled_from(idea_input, name_input)
+                        run_button = ui.button('Run', icon='send', on_click=lambda e: A_Test(e.sender, idea_input, name_input, code_log)).bind_enabled_from(idea_input, 'value').bind_enabled_from(name_input, 'value').props('color=primary')
+                        ui.button('Clear', icon='clear', on_click=lambda: idea_input.set_value(None) or name_input.set_value(None)).props('color=negative').bind_enabled_from(run_button, 'enabled')
+                
+                with ui.expansion('Log', icon='code', on_value_change=on_expansion).classes('w-full h-100') as log_expansion:
+                    with ui.row():
+                        ui.button('Copy', icon='content_copy').props('flat color=primary')
+                        ui.button('Clear', icon='clear', on_click=lambda: code_log.clear()).props('flat color=negative')
+                    code_log = ui.log(max_lines=100).classes('w-full h-full')
 
             #---------------------------------------------------------------------------------------------------------------------------------------------------#
                     
