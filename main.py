@@ -41,14 +41,18 @@ class EssayCrew:
         result = crew.kickoff()
         return result
 
+def main_run(idea, name):
+    essay_crew = EssayCrew(idea, name)
+    result = essay_crew.run()
+    return result
+
 if __name__ == "__main__":
     print("## easyessay ##")
     print("---------------")
     idea = input(dedent("""What's your idea?"""))
     name = input(dedent("""Name the essay:"""))
 
-    essay_crew = EssayCrew(idea, name)
-    result = essay_crew.run()
+    result = main_run(idea, name)
     print("\n\n---------------------------------------------------")
     print("######################")
     print("## Essay Completed! ##")

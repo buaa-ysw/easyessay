@@ -1,6 +1,16 @@
 import requests
 from datetime import datetime
 import pytz
+import os
+import threading
+
+from nicegui import ui
+from init import output_path
+from main import main_run
+
+def main_run_thread(idea, name):
+    thread = threading.Thread(target=main_run, args=(idea, name))
+    thread.start()
 
 def sync_info():
     url = "https://api.github.com/repos/buaa-ysw/easyessay"
@@ -29,14 +39,13 @@ build_time, name_title = sync_info()
 
 # https://fonts.google.com/icons?icon.set=Material+Icons
 
-from nicegui import ui
 
 dark = ui.dark_mode()
 
-with ui.left_drawer(value=False, bordered=True).style('background-color: #ebf1fa').props('bordered') as ui_left_drawer:
-    ui.button('Dash Board').props('flat color=black')
-    ui.button('Playground').props('flat color=black')
-    ui.button('Gallery').props('flat color=black')
+# with ui.left_drawer(value=False, bordered=True).style('background-color: #ebf1fa').props('bordered') as ui_left_drawer:
+#     ui.button('Dash Board').props('flat color=black')
+#     ui.button('Playground').props('flat color=black')
+#     ui.button('Gallery').props('flat color=black')
 
 with ui.footer().style('background-color: #3874c8') as ui_footer:
     ui.label('Last build: ').props('color=white')
@@ -44,23 +53,15 @@ with ui.footer().style('background-color: #3874c8') as ui_footer:
 
 def on_expansion():
     if dark.value:
-        if sim_expansion.value:
-            sim_expansion.style('background-color: #343434')
+        if main_expansion.value:
+            main_expansion.style('background-color: #343434')
         else:
-            sim_expansion.style('background-color: transparent')
-        if dis_expansion.value:
-            dis_expansion.style('background-color: #343434')
-        else:
-            dis_expansion.style('background-color: transparent')
+            main_expansion.style('background-color: transparent')
     else:
-        if sim_expansion.value:
-            sim_expansion.style('background-color: #f0f0f0')
+        if main_expansion.value:
+            main_expansion.style('background-color: #f0f0f0')
         else:
-            sim_expansion.style('background-color: transparent')
-        if dis_expansion.value:
-            dis_expansion.style('background-color: #f0f0f0')
-        else:
-            dis_expansion.style('background-color: transparent')
+            main_expansion.style('background-color: transparent')
 
 with ui.splitter(value=12).classes('w-full h-full') as splitter:
     with splitter.before:
@@ -82,20 +83,51 @@ with ui.splitter(value=12).classes('w-full h-full') as splitter:
             #---------------------------------------------------------------------------------------------------------------------------------------------------#
                 
             with ui.tab_panel(playground):
-                with ui.expansion('Simulation', icon='token', on_value_change=on_expansion).classes('w-full') as sim_expansion:
-                    options = ['Earthquake', 'Typhoon', 'Awesome']
-                    with ui.input(label='Input a Disaster', placeholder='start typing', autocomplete=options).classes('w-full') as sim_input:
-                        ui.button(icon='clear', on_click=lambda: sim_input.set_value(None)).props('flat color=warning').bind_visibility_from(sim_input, 'value')
-                        ui.button(icon='send').props('flat color=primary').bind_visibility_from(sim_input, 'value')
+                with ui.expansion('Easy Essay', icon='token', on_value_change=on_expansion).classes('w-full') as main_expansion:
+                    idea_options = ['Earthquake', 'Typhoon', 'Awesome']
+                    with ui.input(label='Input an idea', placeholder='start typing', autocomplete=idea_options).classes('w-full') as main_input:
+                        ui.button(icon='clear', on_click=lambda: main_input.set_value(None)).props('flat color=warning').bind_visibility_from(main_input, 'value')
+                        # ui.button(icon='send', on_click=lambda: ).props('flat color=primary').bind_visibility_from(main_input, 'value')
 
-                with ui.expansion('Dispatch', icon='psychology', on_value_change=on_expansion).classes('w-full') as dis_expansion:
-                    ui.label('inside the expansion')
+                    name_options = ['Earthquake', 'Typhoon', 'Awesome']
+                    with ui.input(label='Input a name', placeholder='start typing', autocomplete=name_options).classes('w-full') as main_input:
+                        ui.button(icon='clear', on_click=lambda: main_input.set_value(None)).props('flat color=warning').bind_visibility_from(main_input, 'value')
+                        # ui.button(icon='send', on_click=lambda: ).props('flat color=primary').bind_visibility_from(main_input, 'value')
 
             #---------------------------------------------------------------------------------------------------------------------------------------------------#
                     
             with ui.tab_panel(galley):
                 ui.label('Galley').classes('text-h6')
                 ui.label('History of Satellite-Dispatch processing...')
+                ui.label('Galley').classes('text-h6')
+                ui.label('History of Satellite-Dispatch processing...')
+                
+                # 获取output_path路径下的所有文件夹
+                folders = [folder for folder in os.listdir(output_path) if os.path.isdir(os.path.join(output_path, folder))]
+
+                # 为每个文件夹创建一个ui.expansion
+                for folder in folders:
+                    with ui.expansion(folder, icon='folder').classes('w-full'):
+                        # 获取output_path + folder文件夹下的所有文件
+                        folder_path = os.path.join(output_path, folder)
+                        files = [file for file in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, file))]
+                        # 为每个文件创建一个ui.expansion
+                        for file in files:
+                            file_path = os.path.join(folder_path, file)
+                            file_extension = os.path.splitext(file)[1]
+                            if file_extension == '.md':
+                                icon = 'summarize'
+                            elif file_extension == '.txt':
+                                icon = 'text_snippet'
+                            else:
+                                icon = 'file'
+                                pass
+                            # Add file content here
+                            
+                            with open(file_path, 'r') as f:
+                                content = f.read()
+                            with ui.expansion(file, icon=icon).classes('w-full'):
+                                ui.markdown(content)
 
             #---------------------------------------------------------------------------------------------------------------------------------------------------#
                 
@@ -120,13 +152,13 @@ class DarkButton(ui.button):
         self.props(f'icon={"dark_mode" if self._state else "light_mode"}')
         ui_header.style(f'background-color: {"#1f4e88" if self._state else "#3874c8"}')
         ui_footer.style(f'background-color: {"#1f4e88" if self._state else "#3874c8"}')
-        ui_left_drawer.style(f'background-color: {"#b0b9cf" if self._state else "#ebf1fa"}')
+        # ui_left_drawer.style(f'background-color: {"#b0b9cf" if self._state else "#ebf1fa"}')
         on_expansion()
         # self.props(f'color={"grey" if self._state else "white"}')
         super().update()
 
 with ui.header(elevated=True).style('background-color: #3874c8').classes('items-center justify-between') as ui_header:
-    ui.button(on_click=lambda: ui_left_drawer.toggle(), icon='menu').props('flat color=white')
+    # ui.button(on_click=lambda: ui_left_drawer.toggle(), icon='menu').props('flat color=white')
     ui.label(name_title).classes('text-h5 bold')
     ui.space()
     # ui.button(icon='dark_mode', on_click=lambda: dark.toggle()).props('flat color=white no-border')
